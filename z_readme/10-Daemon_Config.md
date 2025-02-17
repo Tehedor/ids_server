@@ -56,9 +56,11 @@ sudo systemctl status ids_serverd.service
 ```
 
 ## **Nota importante:**
->
-> ```bash
-> sudo systemctl disable ids_serverd.service
-> sudo systemctl stop ids_serverd.service
-> ```
->
+
+```bash
+sudo systemctl disable ids_serverd.service
+sudo systemctl stop ids_serverd.service
+```
+
+
+
