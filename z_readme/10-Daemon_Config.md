@@ -6,7 +6,7 @@
 ## 1. Create a systemd service file
 
 ``` bash
-sudo vim /etc/systemd/system/ids_serverdd.service
+sudo vim /etc/systemd/system/ids_serverd.service
 ```
 
 ### ids_serverd.service

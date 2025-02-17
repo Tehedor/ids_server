@@ -65,8 +65,9 @@ ejecutar_scripts() {
 manejar_conexion() {
     local socket_cliente=\$1
     local ip_cliente
-    ip_cliente=\$(printf "%s" "\$((</dev/tcp/\${socket_cliente_ip}/\${socket_cliente_port} >&0 </dev/null) && echo \$socket_cliente_ip))")
-
+    ip_cliente=$(echo "$socket_cliente" | awk -F: '{print $1}')
+    # ip_cliente=\$(printf "%s" "\$((</dev/tcp/\${socket_cliente_ip}/\${socket_cliente_port} >&0 </dev/null) && echo \$socket_cliente_ip))")
+    
     log_mensaje "Conexión entrante desde IP: \$ip_cliente"
 
     if ! es_ip_permitida "\$ip_cliente"; then

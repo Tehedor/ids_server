@@ -8,8 +8,12 @@
 
 /usr/local/share/ids_server
 
+```bash 
+sudo cp -r ids_server /usr/local/share/
+```
+
 ``` bash
-sudo chmod -R +x /usr/local/ids_server/*
+sudo chmod -R +x /usr/local/share/ids_server/*
 ```
 ``` bash 
 sudo ln -s /usr/local/share/ids_server/ids_server.sh /usr/local/bin/ids_server
