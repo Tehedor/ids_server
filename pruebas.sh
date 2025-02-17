@@ -1,36 +1,44 @@
 #!/bin/bash
 
 # --- Configuración ---
-PUERTO=12345
+PUERTO=8080
 
-echo "Servidor de sockets básico (sin nc) iniciado."
+echo "Servidor PUT básico (sin nc) iniciado."
 echo "Escuchando en el puerto ${PUERTO}..."
 
 # Crear socket de escucha
-exec 3<>/dev/tcp/localhost/$PUERTO
+exec 3<>/dev/tcp/0/$PUERTO
 socket_escucha=3
 
 while true; do
     # Aceptar conexión entrante
-    exec 4<&3  # Duplicar el socket de escucha al FD 4
+    exec 4<&3
     socket_cliente=4
 
-    echo "-------------------------------"
-    echo "Conexión entrante recibida."
+    # Leer la petición HTTP del cliente (solo la primera línea para simplificar)
+    read -r -u "$socket_cliente" peticion_http
 
-    # Leer datos del cliente (una línea)
-    read -r -u "$socket_cliente" mensaje_cliente
+    if [[ -n "$peticion_http" ]]; then
+        # Extraer método HTTP (primera palabra de la petición)
+        metodo_http=$(echo "$peticion_http" | awk '{print $1}')
 
-    if [[ -n "$mensaje_cliente" ]]; then
-        echo "Mensaje del cliente: \"${mensaje_cliente}\""
+        echo "-------------------------------"
+        echo "Petición recibida."
+        echo "Método HTTP recibido: \"${metodo_http}\""
 
-        # Respuesta del servidor
-        respuesta_servidor="Servidor dice: Mensaje recibido: \"${mensaje_cliente}\""
-        echo "Enviando respuesta al cliente: \"${respuesta_servidor}\""
-        echo -e "$respuesta_servidor" >&"$socket_cliente" # Enviar respuesta por el socket
-
+        if [[ "$metodo_http" == "PUT" ]]; then
+            echo "Petición PUT detectada."
+            respuesta_http="HTTP/1.1 200 OK\r\n\r\nPetición PUT recibida.\r\n"
+            echo -e "$respuesta_http" >&"$socket_cliente"
+            echo "Respuesta 200 OK enviada."
+        else
+            echo "Método HTTP no es PUT. Se esperaba PUT."
+            respuesta_http="HTTP/1.1 405 Method Not Allowed\r\n\r\nSe espera método PUT.\r\n"
+            echo -e "$respuesta_http" >&"$socket_cliente"
+            echo "Respuesta 405 Method Not Allowed enviada."
+        fi
     else
-        echo "Cliente cerró la conexión o no envió datos."
+        echo "Conexión cerrada por el cliente sin enviar petición."
     fi
 
     # Cerrar socket del cliente
