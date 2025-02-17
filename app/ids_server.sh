@@ -12,7 +12,8 @@ SCRIPTS_A_EJECUTAR=(
     "script1.sh"
     "script2.sh"
 )
-ARCHIVO_LOG="log_daemon.log" # Archivo de log opcional, comentar para desactivar logging
+ARCHIVO_LOG="/usr/local/share/ids_server/app/log_daemon.log" # Archivo de log opcional, comentar para desactivar logging
+# ARCHIVO_LOG="log_daemon.log" # Archivo de log opcional, comentar para desactivar logging
 DAEMON_PIDFILE="/var/run/mi_daemon_http_put.pid" # Archivo para guardar el PID del daemon
 
 # --- Funciones ---
