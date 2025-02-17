@@ -7,7 +7,7 @@ echo "Servidor de sockets básico (sin nc) iniciado."
 echo "Escuchando en el puerto ${PUERTO}..."
 
 # Crear socket de escucha
-exec 3<>/dev/tcp/0/$PUERTO
+exec 3<>/dev/tcp/localhost/$PUERTO
 socket_escucha=3
 
 while true; do
