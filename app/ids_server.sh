@@ -29,16 +29,16 @@ log_mensaje() {
 es_ip_permitida() {
     local ip_cliente=$1
     # --- Usar archivo de IPs permitidas (opcional) ---
-    if [ -r "$ARCHIVO_IPS_PERMITIDAS" ]; entonces
+    if [ -r "$ARCHIVO_IPS_PERMITIDAS" ]; then
         while IFS= read -r ip_permitida; do
-            if [[ "$ip_cliente" == "$ip_permitida" ]] && [[ -n "$ip_permitida" ]] && [[ ! $ip_permitida =~ ^# ]]; entonces
+            if [[ "$ip_cliente" == "$ip_permitida" ]] && [[ -n "$ip_permitida" ]] && [[ ! $ip_permitida =~ ^# ]]; then
                 return 0 # IP permitida
             fi
         done < "$ARCHIVO_IPS_PERMITIDAS"
     fi
     # --- Usar array de IPs permitidas (configuración interna) ---
     # for ip_permitida in "${IPS_PERMITIDAS[@]}"; do
-    #     if [[ "$ip_cliente" == "$ip_permitida" ]]; entonces
+    #     if [[ "$ip_cliente" == "$ip_permitida" ]]; then
     #         return 0 # IP permitida
     #     fi
     # done
@@ -49,10 +49,10 @@ ejecutar_scripts() {
     log_mensaje "Ejecutando scripts..."
     for script in "${SCRIPTS_A_EJECUTAR[@]}"; do
         script_completo="$DIRECTORIO_SCRIPTS/$script"
-        if [ -x "$script_completo" ]; entonces
+        if [ -x "$script_completo" ]; then
             log_mensaje "Ejecutando script: $script_completo"
             "$script_completo"
-            if [ $? -ne 0 ]; entonces
+            if [ $? -ne 0 ]; then
                 log_mensaje "Error al ejecutar script: $script_completo"
             else
                 log_mensaje "Script $script_completo ejecutado correctamente"
@@ -66,11 +66,11 @@ ejecutar_scripts() {
 manejar_conexion() {
     local socket_cliente=$1
     local ip_cliente
-    ip_cliente=$(echo "$socket_cliente" | awk -F: '{print $1}')
+    ip_cliente=$(netstat -anp | grep "$socket_cliente" | awk '{print $5}' | cut -d: -f1)
     
     log_mensaje "Conexión entrante desde IP: $ip_cliente"
 
-    if ! es_ip_permitida "$ip_cliente"; entonces
+    if ! es_ip_permitida "$ip_cliente"; then
         log_mensaje "IP no permitida: $ip_cliente. Conexión rechazada."
         printf "HTTP/1.1 403 Forbidden\r\n\r\nAcceso denegado.\r\n" >&"$socket_cliente"
         close_socket "$socket_cliente"
@@ -82,7 +82,7 @@ manejar_conexion() {
     # Extraer método HTTP (primer palabra de la petición)
     metodo_http=$(echo "$peticion" | awk '{print $1}')
 
-    if [[ "$metodo_http" != "PUT" ]]; entonces
+    if [[ "$metodo_http" != "PUT" ]]; then
         log_mensaje "Método HTTP no permitido: $metodo_http. Se esperaba PUT."
         printf "HTTP/1.1 405 Method Not Allowed\r\n\r\nSe espera método PUT.\r\n" >&"$socket_cliente"
         close_socket "$socket_cliente"
@@ -103,9 +103,9 @@ close_socket() {
 }
 
 daemonizar() {
-    if [ -f "$DAEMON_PIDFILE" ]; entonces
+    if [ -f "$DAEMON_PIDFILE" ]; then
         PID=$(cat "$DAEMON_PIDFILE")
-        if ps -p "$PID" > /dev/null 2>&1; entonces
+        if ps -p "$PID" > /dev/null 2>&1; then
             log_mensaje "Daemon ya está en ejecución con PID $PID. Saliendo."
             exit 1
         fi
@@ -121,7 +121,7 @@ daemonizar() {
 
 # --- Main script ---
 
-if [ "$1" == "--daemonizado" ]; entonces
+if [ "$1" == "--daemonizado" ]; then
     # Modo daemonizado (ejecución real del daemon)
     shift # Eliminar "--daemonizado" de los argumentos
 
@@ -139,11 +139,6 @@ if [ "$1" == "--daemonizado" ]; entonces
         # Aceptar conexiones entrantes
         exec 4<&3 # Duplicar socket de escucha
         socket_cliente=4
-
-        # Obtener IP y puerto del cliente (antes de aceptar la conexión)
-        socket_cliente_info=$(exec <&$socket_cliente; netstat -anp | grep LISTEN | grep $socket_cliente_port | awk '{print $5}')
-        socket_cliente_ip=$(echo "$socket_cliente_info" | awk -F":" '{print $1}')
-        socket_cliente_port=$(echo "$socket_cliente_info" | awk -F":" '{print $2}')
 
         # Manejar conexión en segundo plano (para no bloquear el bucle principal)
         ( manejar_conexion "$socket_cliente" ) &
