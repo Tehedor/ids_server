@@ -16,7 +16,7 @@ sudo cp -r ids_server /usr/local/share/
 sudo chmod -R +x /usr/local/share/ids_server/*
 ```
 ``` bash 
-sudo ln -s /usr/local/share/ids_server/ids_server.sh /usr/local/bin/ids_server
+sudo ln -s /usr/local/share/ids_server/app/ids_server.sh /usr/local/bin/ids_server
 ```
 
 ## Daemon config
