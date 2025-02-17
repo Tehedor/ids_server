@@ -7,7 +7,7 @@
 ## App Config
 
 /usr/local/share/ids_server
-
+sudo ss -tuln | grep 8085
 ```bash 
 sudo cp -r ids_server /usr/local/share/
 ```
@@ -27,4 +27,8 @@ sudo ln -s /usr/local/share/ids_server/app/ids_server.sh /usr/local/bin/ids_serv
 ## Test
 ```bash 
 curl -X PUT http://localhost:8085/path/to/resource -d "data=example"
+```
+
+```bash
+sudo ss -tuln 
 ```
