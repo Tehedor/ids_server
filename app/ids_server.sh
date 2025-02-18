@@ -66,13 +66,15 @@ ejecutar_scripts() {
 manejar_conexion() {
     local socket_cliente=$1
     local ip_cliente
-    ip_cliente=$(netstat -anp | grep "$socket_cliente" | awk '{print $5}' | cut -d: -f1)
-    
+
+    # Obtener IP del cliente usando nc
+    ip_cliente=$(echo "$socket_cliente" | cut -d ' ' -f 5 | cut -d ':' -f 1)
+
     log_mensaje "Conexión entrante desde IP: $ip_cliente"
 
     if ! es_ip_permitida "$ip_cliente"; then
         log_mensaje "IP no permitida: $ip_cliente. Conexión rechazada."
-        printf "HTTP/1.1 403 Forbidden\r\n\r\nAcceso denegado.\r\n" >&"$socket_cliente"
+        echo "HTTP/1.1 403 Forbidden\r\n\r\nAcceso denegado.\r\n" >&"$socket_cliente"
         close_socket "$socket_cliente"
         return 1
     fi
@@ -84,7 +86,7 @@ manejar_conexion() {
 
     if [[ "$metodo_http" != "PUT" ]]; then
         log_mensaje "Método HTTP no permitido: $metodo_http. Se esperaba PUT."
-        printf "HTTP/1.1 405 Method Not Allowed\r\n\r\nSe espera método PUT.\r\n" >&"$socket_cliente"
+        echo "HTTP/1.1 405 Method Not Allowed\r\n\r\nSe espera método PUT.\r\n" >&"$socket_cliente"
         close_socket "$socket_cliente"
         return 1
     fi
@@ -92,7 +94,7 @@ manejar_conexion() {
     log_mensaje "Petición PUT válida recibida desde IP permitida: $ip_cliente"
     ejecutar_scripts
 
-    printf "HTTP/1.1 200 OK\r\n\r\nPetición PUT recibida y procesada.\r\n" >&"$socket_cliente"
+    echo "HTTP/1.1 200 OK\r\n\r\nPetición PUT recibida y procesada.\r\n" >&"$socket_cliente"
     close_socket "$socket_cliente"
     return 0
 }
@@ -125,24 +127,19 @@ if [ "$1" == "--daemonizado" ]; then
     # Modo daemonizado (ejecución real del daemon)
     shift # Eliminar "--daemonizado" de los argumentos
 
-    if [ -n "$ARCHIVO_LOG" ]; entonces
+    if [ -n "$ARCHIVO_LOG" ]; then
         exec >>"$ARCHIVO_LOG" 2>>"$ARCHIVO_LOG" # Redirigir stdout y stderr al archivo log
     fi
 
     log_mensaje "Daemon iniciado en puerto $PUERTO"
 
-    # Crear socket de escucha
-    exec 3<>/dev/tcp/0/$PUERTO
-    socket_escucha=3
-
+    # Crear socket de escucha con nc
     while true; do
-        # Aceptar conexiones entrantes
-        exec 4<&3 # Duplicar socket de escucha
-        socket_cliente=4
-
-        # Manejar conexión en segundo plano (para no bloquear el bucle principal)
-        ( manejar_conexion "$socket_cliente" ) &
-        close_socket "$socket_cliente" # Cerrar socket en el proceso padre, el hijo se encarga de su copia
+        nc -l -p "$PUERTO" -k | (
+            socket_cliente=$(cat <&3) # Leer el socket del cliente desde el descriptor 3
+            exec 3<&- # Cerrar el descriptor 3 en el proceso hijo
+            manejar_conexion "$socket_cliente"
+        ) 3<&0 & # Redirigir la entrada estándar al descriptor 3 para nc y ejecutar en segundo plano
     done
 
 else
