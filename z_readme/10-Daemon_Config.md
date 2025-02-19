@@ -11,7 +11,7 @@ sudo vim /etc/systemd/system/ids_serverd.service
 
 ### ids_serverd.service
 
-#### general_latest
+#### Daemon bash
 
 ``` ini
 [Unit]
@@ -26,6 +26,24 @@ ExecStart=/usr/local/bin/ids_server --daemonizado
 [Install]
 WantedBy=multi-user.target
 ```
+#### Daemon c
+
+```bash
+[Unit]
+Description=IDS Server
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/ids_server
+Restart=always
+User=root
+WorkingDirectory=/usr/local/bin/
+StandardOutput=append:/var/log/ids_server.log
+StandardError=append:/var/log/ids_server.log
+
+[Install]
+WantedBy=multi-user.target
+``` 
 
 ## 2. Reload systemd and enable the service
 
