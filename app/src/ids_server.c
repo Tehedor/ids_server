@@ -115,6 +115,7 @@ int main() {
     listen(server_sock, 5);
 
     log_message("Servidor iniciado");
+    printf("Servidor iniciado en el puerto %d\n", PORT);
 
     while (1) {
         struct sockaddr_in client_addr;
@@ -125,5 +126,6 @@ int main() {
         }
     }
     close(server_sock);
+    printf("Servidor finalizado\n");
     return 0;
 }
