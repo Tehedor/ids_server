@@ -26,31 +26,52 @@ void log_message(const char *message) {
 // }
 
 
+
 int is_valid_ip(const char *ip, char *role) {
     FILE *file = fopen(VALID_IPS_FILE, "r");
     if (!file) return 0;
 
     char line[INET_ADDRSTRLEN];
+    char master_ips[MAX_IPS][INET_ADDRSTRLEN];
+    char worker_ips[MAX_IPS][INET_ADDRSTRLEN];
+    int master_count = 0, worker_count = 0;
+    int is_master_section = 0, is_worker_section = 0;
+
     while (fgets(line, sizeof(line), file)) {
         line[strcspn(line, "\n")] = 0; // Eliminar salto de línea
-        if (strcmp(line, ip) == 0) {
-            fclose(file);
+
+        if (strcmp(line, "[master]") == 0) {
+            is_master_section = 1;
+            is_worker_section = 0;
+            continue;
+        } else if (strcmp(line, "[worker]") == 0) {
+            is_master_section = 0;
+            is_worker_section = 1;
+            continue;
+        }
+
+        if (is_master_section && master_count < MAX_IPS) {
+            strcpy(master_ips[master_count++], line);
+        } else if (is_worker_section && worker_count < MAX_IPS) {
+            strcpy(worker_ips[worker_count++], line);
+        }
+    }
+    fclose(file);
+
+    for (int i = 0; i < master_count; i++) {
+        if (strcmp(master_ips[i], ip) == 0) {
             strcpy(role, "master");
             return 1;
         }
     }
 
-    // Check for worker IPs
-    while (fgets(line, sizeof(line), file)) {
-        line[strcspn(line, "\n")] = 0; // Eliminar salto de línea
-        if (strcmp(line, ip) == 0) {
-            fclose(file);
+    for (int i = 0; i < worker_count; i++) {
+        if (strcmp(worker_ips[i], ip) == 0) {
             strcpy(role, "worker");
             return 1;
         }
     }
 
-    fclose(file);
     return 0;
 }
 

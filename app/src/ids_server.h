@@ -15,6 +15,8 @@
 #define VALID_IPS_FILE "../config/ips_validas.txt"
 #define SCRIPTS_DIR "../scripts"
 
+#define MAX_IPS 100
+
 // Declaraciones de funciones
 void log_message(const char *message);
 int is_valid_ip(const char *ip, char *role);
