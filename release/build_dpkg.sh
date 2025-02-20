@@ -1,0 +1,1 @@
+dpkg-deb --build ../dpkg-ids-server .

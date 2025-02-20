@@ -3,4 +3,5 @@ Version: 1.0
 Section: utils
 Priority: optional
 Architecture: all
+Maintainer: IDS Server <ids_server@ids_server.com>
 Description: IDS Server - Servicio de detección de intrusiones
