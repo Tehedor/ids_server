@@ -2,6 +2,6 @@ Package: ids-server
 Version: 1.0
 Section: utils
 Priority: optional
-Architecture: all
-Maintainer: IDS Server <ids_server@ids_server.com>
+Architecture: amd64
+Maintainer: Tu Nombre <tu.email@example.com>
 Description: IDS Server - Servicio de detección de intrusiones
