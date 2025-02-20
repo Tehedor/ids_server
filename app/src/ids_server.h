@@ -13,7 +13,7 @@
 #define PORT 8085 // Puerto configurable
 #define LOG_FILE "../logs/ids_server.log"
 #define VALID_IPS_FILE "../config/ips_validas.txt"
-#define SCRIPTS_DIR "../scripts/"
+#define SCRIPTS_DIR "../scripts"
 
 // Declaraciones de funciones
 void log_message(const char *message);
