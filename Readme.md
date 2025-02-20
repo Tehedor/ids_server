@@ -32,3 +32,7 @@ curl -X PUT http://localhost:8085/path/to/resource -d "data=example"
 ```bash
 sudo ss -tuln 
 ```
+
+``` bash 
+curl -v -X PUT http://Mmaster:8085
+```

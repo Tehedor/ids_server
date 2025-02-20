@@ -17,8 +17,8 @@
 
 // Declaraciones de funciones
 void log_message(const char *message);
-int is_valid_ip(const char *ip);
-void execute_script(const char *ip);
+int is_valid_ip(const char *ip, char *role);
+void execute_script(const char *ip, const char *role);
 void handle_request(int client_sock, struct sockaddr_in *client_addr);
 
 #endif
