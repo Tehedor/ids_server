@@ -78,10 +78,13 @@ int is_valid_ip(const char *ip, char *role) {
 void execute_script(const char *ip, const char *role) {
     char command[256];
     snprintf(command, sizeof(command), "%s/%s.sh", SCRIPTS_DIR, role);
+
+    // Imprimir en la consola el script que se está ejecutando, la IP y el rol
+    printf("Ejecutando script: %s para IP: %s con rol: %s\n", command, ip, role);
+
     system(command);
     log_message("Ejecutado script para IP");
 }
-
 
 void handle_request(int client_sock, struct sockaddr_in *client_addr) {
     char buffer[1024];
