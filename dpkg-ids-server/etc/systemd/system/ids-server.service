@@ -1,0 +1,14 @@
+[Unit]
+Description=IDS Server
+After=network.target
+
+[Service]
+ExecStart=/usr/local/ids_server/bin/ids_server
+Restart=always
+User=root
+WorkingDirectory=/usr/local/ids_server/bin/
+StandardOutput=append:/usr/local/ids_server/logs/ids_server.log
+StandardError=append:/usr/local/ids_server/logs/ids_server.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+Package: ids-server
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: all
+Description: IDS Server - Servicio de detección de intrusiones

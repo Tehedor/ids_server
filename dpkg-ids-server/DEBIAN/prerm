@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Detener y deshabilitar el servicio
+if systemctl is-active --quiet ids-server.service; then
+    systemctl stop ids-server.service
+fi
+
+systemctl disable ids-server.service
+
+exit 0
