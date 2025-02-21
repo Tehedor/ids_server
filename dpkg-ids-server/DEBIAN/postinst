@@ -1,12 +1,4 @@
 #!/bin/bash
-
-# Copiar el archivo de servicio a la ubicación correcta
-# cp /etc/systemd/system/ids-server.service /etc/systemd/system/
-
-# Recargar la configuración de systemd
 systemctl daemon-reload
-
-# Habilitar y arrancar el servicio
 systemctl enable --now ids-server.service
-
 exit 0
