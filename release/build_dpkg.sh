@@ -1,1 +1,1 @@
-dpkg-deb --build ../dpkg-ids-server .
+sudo dpkg-deb --build ../dpkg-ids-server .
