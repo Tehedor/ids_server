@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <time.h>
+#include <ctype.h>
 
 #define PORT 8085 // Puerto configurable
 #define LOG_FILE "../logs/ids_server.log"

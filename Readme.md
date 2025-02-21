@@ -36,3 +36,6 @@ sudo ss -tuln
 ``` bash 
 curl -v -X PUT http://Mmaster:8085
 ```
+``` bash 
+curl -v -X PUT http://localhost:8085
+```

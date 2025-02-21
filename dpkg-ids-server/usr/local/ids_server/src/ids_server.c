@@ -9,10 +9,13 @@ void log_message(const char *message) {
     }
 }
 
-
 int is_valid_ip(const char *ip, char *role) {
+    // printf("Validando IP: %s\n", ip);
     FILE *file = fopen(VALID_IPS_FILE, "r");
-    if (!file) return 0;
+    if (!file) {
+        printf("No se pudo abrir el archivo de IPs válidas\n");
+        return 0;
+    }
 
     char line[INET_ADDRSTRLEN];
     char master_ips[MAX_IPS][INET_ADDRSTRLEN];
@@ -20,36 +23,62 @@ int is_valid_ip(const char *ip, char *role) {
     int master_count = 0, worker_count = 0;
     int is_master_section = 0, is_worker_section = 0;
 
+    // printf("Contenido del archivo %s:\n", VALID_IPS_FILE);
     while (fgets(line, sizeof(line), file)) {
+        // printf("%s", line);
         line[strcspn(line, "\n")] = 0; // Eliminar salto de línea
 
-        if (strcmp(line, "[master]") == 0) {
+        // Eliminar espacios en blanco al inicio y al final de la línea
+        char *start = line;
+        while (isspace((unsigned char)*start)) start++;
+        char *end = line + strlen(line) - 1;
+        while (end > start && isspace((unsigned char)*end)) end--;
+        *(end + 1) = '\0';
+
+        // Ignorar líneas en blanco
+        if (strlen(start) == 0) {
+            continue;
+        }
+
+        if (strcmp(start, "[master]") == 0) {
             is_master_section = 1;
             is_worker_section = 0;
             continue;
-        } else if (strcmp(line, "[worker]") == 0) {
+        } else if (strcmp(start, "[worker]") == 0) {
             is_master_section = 0;
             is_worker_section = 1;
             continue;
         }
 
         if (is_master_section && master_count < MAX_IPS) {
-            strcpy(master_ips[master_count++], line);
+            strcpy(master_ips[master_count++], start);
         } else if (is_worker_section && worker_count < MAX_IPS) {
-            strcpy(worker_ips[worker_count++], line);
+            strcpy(worker_ips[worker_count++], start);
         }
     }
     fclose(file);
 
+    // printf("\nIPs master:\n");
+    // for (int i = 0; i < master_count; i++) {
+    //     printf("%s\n", master_ips[i]);
+    // }
+    
+    // printf("IPs worker:\n");
+    // for (int i = 0; i < worker_count; i++) {
+    //     printf("%s\n", worker_ips[i]);
+    // }
+    
     for (int i = 0; i < master_count; i++) {
         if (strcmp(master_ips[i], ip) == 0) {
             strcpy(role, "master");
+            printf("IP %s es master\n", ip);
             return 1;
         }
     }
-
+    
     for (int i = 0; i < worker_count; i++) {
         if (strcmp(worker_ips[i], ip) == 0) {
+            printf("IP %s es worker\n", ip);
             strcpy(role, "worker");
             return 1;
         }
