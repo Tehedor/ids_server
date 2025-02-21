@@ -3,12 +3,14 @@ Description=IDS Server
 After=network.target
 
 [Service]
-ExecStart=/usr/local/ids_server/bin/ids_server
+ExecStart=/bin/bash -c "/usr/local/ids_server/bin/ids_server | tee -a /usr/local/ids_server/logs/ids_server.log"
 Restart=always
 User=root
 WorkingDirectory=/usr/local/ids_server/bin/
-# StandardOutput=append:/usr/local/ids_server/logs/ids_server.log
-# StandardError=append:/usr/local/ids_server/logs/ids_server.log
+
+# Permitir que systemd capture las salidas
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target
