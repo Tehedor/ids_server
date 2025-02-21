@@ -1,1 +1,1 @@
-/etc/systemd/system/ids-server.service
+/lib/systemd/system/ids-server.service
