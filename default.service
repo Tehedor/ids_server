@@ -1,14 +1,2 @@
-[Unit]
-Description=IDS Server
-After=network.target
-
-[Service]
-ExecStart=/usr/local/bin/ids_server
-Restart=always
-User=root
-WorkingDirectory=/usr/local/bin/
-StandardOutput=append:/var/log/ids_server.log
-StandardError=append:/var/log/ids_server.log
-
-[Install]
-WantedBy=multi-user.target
+sudo dpkg --remove --force-remove-reinstreq ids-server
+sudo rm -rf /var/lib/dpkg/info/ids-server.*
