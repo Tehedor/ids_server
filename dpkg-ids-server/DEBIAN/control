@@ -4,4 +4,5 @@ Section: utils
 Priority: optional
 Architecture: amd64
 Maintainer: Tu Nombre <tu.email@example.com>
+Depends: libsystemd-dev
 Description: IDS Server - Servicio de detección de intrusiones

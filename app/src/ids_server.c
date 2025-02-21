@@ -1,12 +1,29 @@
 #include "ids_server.h" // Incluye el archivo de encabezado que acabamos de crear
 
+// void log_message(const char *message) {
+//     FILE *log_file = fopen(LOG_FILE, "a");
+//     if (log_file) {
+//         time_t now = time(NULL);
+//         fprintf(log_file, "%s - %s\n", strtok(ctime(&now), "\n"), message);
+//         fclose(log_file);
+//     }
+// }
+
 void log_message(const char *message) {
+    // Obtener la hora actual
+    time_t now = time(NULL);
+    char timestamp[30];
+    strftime(timestamp, sizeof(timestamp), "%a %b %d %H:%M:%S %Y", localtime(&now));
+
+    // Escribir en el archivo de logs
     FILE *log_file = fopen(LOG_FILE, "a");
     if (log_file) {
-        time_t now = time(NULL);
-        fprintf(log_file, "%s - %s\n", strtok(ctime(&now), "\n"), message);
+        fprintf(log_file, "%s - %s\n", timestamp, message);
         fclose(log_file);
     }
+
+    // Enviar el mensaje al journal de systemd
+    sd_journal_print(LOG_INFO, "[%s] %s", timestamp, message); // LOG_INFO es el nivel de prioridad
 }
 
 int is_valid_ip(const char *ip, char *role) {

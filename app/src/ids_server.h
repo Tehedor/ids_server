@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <ctype.h>
+#include <systemd/sd-journal.h>
 
 #define PORT 8085 // Puerto configurable
 #define LOG_FILE "../logs/ids_server.log"

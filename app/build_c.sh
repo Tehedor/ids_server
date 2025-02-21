@@ -1,1 +1,1 @@
-gcc -o ./bin/ids_server ./src/ids_server.c
+gcc -o ./bin/ids_server ./src/ids_server.c -lsystemd
