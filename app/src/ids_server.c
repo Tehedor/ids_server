@@ -134,11 +134,12 @@ void handle_request(int client_sock, struct sockaddr_in *client_addr) {
         execute_script(client_ip, role);
     } else {
         send(client_sock, "HTTP/1.1 403 Forbidden\r\n\r\n", 26, 0);
-        log_message("Solicitud rechazada");
+        char log_msg[512];
+        snprintf(log_msg, sizeof(log_msg), "Solicitud rechazada desde IP: %s, Petición: %s %s", client_ip, method, path);
+        log_message(log_msg);
     }
     close(client_sock);
 }
-
 int main() {
     int server_sock = socket(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in server_addr = {AF_INET, htons(PORT), INADDR_ANY};
