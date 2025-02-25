@@ -1,8 +1,7 @@
-
-<group name="sshd,">
+<group name="sshd">
   <rule id="100100" level="7">
-    <decoded_as>ssh-faile</decoded_as>
+    <decoded_as>ssh-failed</decoded_as>
     <description>Intento de acceso SSH con usuario inválido</description>
-    <group>sshd,</group>
+    <group>sshd</group>
   </rule>
 </group>
