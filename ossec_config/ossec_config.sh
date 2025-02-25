@@ -26,4 +26,4 @@ sudo cp ./config/local_rules.xml /var/ossec/rules/local_rules.xml
 
 
 ## Arrancar ossec
-/var/ossec/bin/ossec-control start
+sudo /var/ossec/bin/ossec-control start
